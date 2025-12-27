@@ -2,6 +2,7 @@ import torch
 from topic_modeling.config.configuration import ConfigurationManager
 from topic_modeling.pipeline.stage_01_data_ingestion import DataIngestionPipeline
 from topic_modeling.pipeline.stage_02_data_transformation import DataTransformationPipeline
+from topic_modeling.pipeline.stage_03_data_EDA import TopicEDAPipeline
 from topic_modeling.utils.logging_setup import logger
 
 # Clear CUDA memory (good practice)
@@ -27,10 +28,19 @@ def main():
         STAGE_NAME = "Stage 02: Data Transformation"
         logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
         data_transformation_pipeline = DataTransformationPipeline(config_manager)
-        data_transformation = data_transformation_pipeline.run_pipeline(df = raw_df.copy(), splits = splits)
+        transformation_output = data_transformation_pipeline.run_pipeline(df = raw_df.copy(), splits = splits)
         logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\n")
 
-       
+
+        # --- Stage 3: Exploratory Data Analysis (EDA) ---
+        STAGE_NAME = "Stage 03: Data EDA"
+        logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
+        # Combine raw labels with cleaned text for meaningful EDA
+        eda_df = raw_df.copy()
+        eda_df['clean_text'] = transformation_output['clean_text']
+        topic_eda_pipeline = TopicEDAPipeline(config_manager)
+        topic_eda_pipeline.run_pipeline(df = eda_df)
+        logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\n")
 
     except Exception as e:
         logger.error(f"FATAL ERROR in pipeline execution: {e}")
