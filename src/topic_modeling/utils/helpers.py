@@ -2,9 +2,7 @@
 import torch
 import json
 import os
-from typing import List
 import zipfile
-from aiohttp_retry import Dict, Tuple
 from box import ConfigBox
 import requests
 import torch
