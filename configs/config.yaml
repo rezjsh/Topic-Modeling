@@ -1,0 +1,18 @@
+data_ingestion:
+  dataset_name: "20newsgroups"
+  test_size: 0.2
+  val_size: 0.15
+  random_state: 42
+  shuffle: True
+  arxiv_subset: "abstract" # ArXiv specific: use 'abstract' or 'article' (article is very long)
+
+data_transformation:
+  root_dir: artifacts/data_transformation
+  vocab_path: artifacts/data_transformation/vocab.npy
+  id2word_path: artifacts/data_transformation/id2word.npy
+  bow_train_path: artifacts/data_transformation/bow_train.npy
+  bow_val_path: artifacts/data_transformation/bow_val.npy
+  bow_test_path: artifacts/data_transformation/bow_test.npy
+
+  ngram_range: [1, 2]
+  mode: "aggressive" # 'aggressive' or 'contextual'
