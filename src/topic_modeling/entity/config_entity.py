@@ -25,3 +25,12 @@ class DataTransformationConfig:
     bow_test_path: Path = f"{root_dir}/bow_test.npy"
     vocab_path: Path = f"{root_dir}/vocab.npy"
     id2word_path: Path = f"{root_dir}/id2word.npy"
+
+@dataclass(frozen=True)
+class DataEDAConfig:
+    root_dir: Path
+    text_col: str
+    label_col: str
+    top_k_ngrams: int
+    wordcloud_width: int
+    wordcloud_height: int
