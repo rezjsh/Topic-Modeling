@@ -30,7 +30,7 @@ class ConfigurationManager(metaclass=SingletonMeta):
         config = self.config.data_transformation
         params = self.params.data_transformation
         logger.info(f"DataTransformationConfig loaded: configs: {config} and params: {params}")
-        dirs_to_create = [config.root_dir, config.vocab_path.parent, config.id2word_path.parent, config.bow_train_path.parent, config.bow_val_path.parent, config.bow_test_path.parent]
+        dirs_to_create = [config.root_dir]
         create_directory(dirs_to_create)
         logger.info(f"Created directories for data transformation artifacts: {dirs_to_create}")
 
@@ -52,3 +52,22 @@ class ConfigurationManager(metaclass=SingletonMeta):
         logger.info(f"DataTransformationConfig created: {data_transformation_config}")
         return data_transformation_config
         
+    def get_data_eda_config(self):
+        config = self.config.data_eda
+        params = self.params.data_eda
+        logger.info(f"DataEDAConfig loaded: configs: {config} and params: {params}")
+        dirs_to_create = [config.root_dir]
+        create_directory(dirs_to_create)
+        logger.info(f"Created directories for data eda artifacts: {dirs_to_create}")
+
+        data_eda_config = {
+            "root_dir": config.root_dir,
+            "text_col": config.text_col,
+            "label_col": config.label_col,
+            "top_k_ngrams": params.top_k_ngrams,
+            "wordcloud_width": config.wordcloud_width,
+            "wordcloud_height": config.wordcloud_height
+        }
+
+        logger.info(f"DataEDAConfig created: {data_eda_config}")
+        return data_eda_config
