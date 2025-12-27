@@ -3,3 +3,6 @@ data_transformation:
   min_df: 5
   max_df: 0.7
   batch_size: 512
+
+data_eda:
+  top_k_ngrams: 20
