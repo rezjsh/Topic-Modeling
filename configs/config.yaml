@@ -1,6 +1,6 @@
 data_ingestion:
   dataset_name: "20newsgroups"
-  test_size: 0.2
+  test_size: 0.15
   val_size: 0.15
   random_state: 42
   shuffle: True
@@ -16,3 +16,10 @@ data_transformation:
 
   ngram_range: [1, 2]
   mode: "aggressive" # 'aggressive' or 'contextual'
+
+data_eda:
+  root_dir: reports/eda
+  text_col: "clean_text"
+  label_col: "label_name"
+  wordcloud_width: 800
+  wordcloud_height: 400
