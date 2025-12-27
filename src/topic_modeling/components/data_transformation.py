@@ -1,10 +1,8 @@
-import os
 from typing import List
 import spacy
 import numpy as np
-import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
-import tqdm
+from tqdm.auto import tqdm # auto detects if you are in a terminal or Jupyter notebook
 from topic_modeling.utils.logging_setup import logger
 from topic_modeling.entity.config_entity import DataTransformationConfig
 import re
