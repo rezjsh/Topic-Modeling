@@ -2,8 +2,8 @@ from topic_modeling.constants.constants import CONFIG_FILE_PATH, PARAMS_FILE_PAT
 from topic_modeling.core.singleton import SingletonMeta
 from topic_modeling.utils.helpers import create_directory, get_num_workers, read_yaml_file
 from topic_modeling.utils.logging_setup import logger
-from topic_modeling.entity.config_entity import DataIngestionConfig, DataTransformationConfig
-
+from topic_modeling.entity.config_entity import DataEDAConfig, DataIngestionConfig, DataTransformationConfig
+from pathlib import Path
 class ConfigurationManager(metaclass=SingletonMeta):
     def __init__(self, config_file_path: str = CONFIG_FILE_PATH, params_file_path: str = PARAMS_FILE_PATH):
         self.config = read_yaml_file(config_file_path)
@@ -52,22 +52,22 @@ class ConfigurationManager(metaclass=SingletonMeta):
         logger.info(f"DataTransformationConfig created: {data_transformation_config}")
         return data_transformation_config
         
-    def get_data_eda_config(self):
+    def get_data_eda_config(self) -> DataEDAConfig:
         config = self.config.data_eda
         params = self.params.data_eda
         logger.info(f"DataEDAConfig loaded: configs: {config} and params: {params}")
-        dirs_to_create = [config.root_dir]
+        dirs_to_create = [Path(config.root_dir)]
         create_directory(dirs_to_create)
         logger.info(f"Created directories for data eda artifacts: {dirs_to_create}")
 
-        data_eda_config = {
-            "root_dir": config.root_dir,
-            "text_col": config.text_col,
-            "label_col": config.label_col,
-            "top_k_ngrams": params.top_k_ngrams,
-            "wordcloud_width": config.wordcloud_width,
-            "wordcloud_height": config.wordcloud_height
-        }
+        data_eda_config = DataEDAConfig(
+            root_dir=Path(config.root_dir),
+            text_col=config.text_col,
+            label_col=config.label_col,
+            top_k_ngrams=params.top_k_ngrams,
+            wordcloud_width=config.wordcloud_width,
+            wordcloud_height=config.wordcloud_height
+        )
 
         logger.info(f"DataEDAConfig created: {data_eda_config}")
         return data_eda_config
