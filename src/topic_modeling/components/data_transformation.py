@@ -30,10 +30,18 @@ class DataTransformation:
 
 
     def get_vocab(self) -> List[str]:
-        """Returns the vocabulary learned by the CountVectorizer."""
-        if self.vocab is None:
-            raise ValueError("Vocabulary is not set. Fit the vectorizer first.")
-        return self.vocab
+        """
+        Returns the vocabulary as a list of strings.
+        Ensures the vectorizer has been fitted first.
+        """
+        if self.vocab is not None:
+            return self.vocab
+        
+        if self.vectorizer is not None and hasattr(self.vectorizer, 'get_feature_names_out'):
+            self.vocab = self.vectorizer.get_feature_names_out().tolist()
+            return self.vocab
+        
+        raise ValueError("Vocabulary not found. Ensure the vectorizer is fitted or vocab is loaded.")
     
     def get_id2word(self) -> dict:
         """Returns the mapping from word index to word."""
