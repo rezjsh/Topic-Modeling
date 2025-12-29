@@ -23,3 +23,49 @@ data_eda:
   label_col: "label_name"
   wordcloud_width: 800
   wordcloud_height: 400
+
+data_loading:
+  root_dir: artifacts/data_loading
+  shuffle: True
+  num_workers: 4
+  pin_memory: True
+
+model_factory:
+  model_name: "LDA" # Options: 'LDA', 'NMF', 'LSA', 'PLSA', 'ETM', 'CTM', 'ProdLDA'
+  num_topics: 20
+  top_n: 10
+
+classic_model:
+  random_state: 42
+  learning_method: "online" # Options: 'batch' or 'online' (only for LDA)
+  init: "nndsvd" # Options: 'random', 'nndsvd', 'nndsvda', 'nndsvdar' (only for NMF)
+
+prod_lda_network:
+  hidden: 256
+  dropout_rate: 0.2
+
+ntm_network:
+  hidden: 256
+
+embedding_model:
+  min_topic_size: 10
+  top_n_words: 10
+  calculate_probabilities: True
+  language: "english"
+  n_gram_range: [1, 2]
+  low_memory: True
+  speed: "deep-learn" # Options: 'fast-learn', 'learn', 'deep-learn'
+  workers: 4
+
+early_stopping_callback:
+  monitor: "val_loss"
+  patience: 5
+  mode: "min"
+
+model_logger:
+  log_dir: artifacts/callbacks/model_logger
+
+model_checkpoint:
+  save_path: artifacts/checkpoints/best_model.pt
+  monitor: "val_loss"
+  mode: "min"
