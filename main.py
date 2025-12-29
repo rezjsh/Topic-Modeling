@@ -3,6 +3,10 @@ from topic_modeling.config.configuration import ConfigurationManager
 from topic_modeling.pipeline.stage_01_data_ingestion import DataIngestionPipeline
 from topic_modeling.pipeline.stage_02_data_transformation import DataTransformationPipeline
 from topic_modeling.pipeline.stage_03_data_EDA import TopicEDAPipeline
+from topic_modeling.pipeline.stage_04_dataset import DatasetPipeline
+from topic_modeling.pipeline.stage_05_data_loading import DataLoadingPipeline
+from topic_modeling.pipeline.stage_06_model_factory import ModelFactoryPipeline
+from topic_modeling.pipeline.stage_07_callbacks import CallbacksPipeline
 from topic_modeling.utils.logging_setup import logger
 
 # Clear CUDA memory (good practice)
@@ -40,6 +44,39 @@ def main():
         eda_df['clean_text'] = transformation_output['clean_text']
         topic_eda_pipeline = TopicEDAPipeline(config_manager)
         topic_eda_pipeline.run_pipeline(df = eda_df)
+        logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\n")
+
+
+        # --- Stage 4: Dataset Creation ---
+        STAGE_NAME = "Stage 04: Dataset Creation"
+        logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
+        dataset_pipeline = DatasetPipeline(config_manager)
+        dataset = dataset_pipeline.run_pipeline(transformation_output=transformation_output, splits=splits)
+        logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\n")
+
+        # --- Stage 5: Data Loading (DataLoader Creation) ---
+        STAGE_NAME = "Stage 05: Data Loading"
+        logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
+        # TODO: implement data loading pipeline
+        data_loading_pipeline = DataLoadingPipeline(config_manager)
+        train_loader, val_loader, test_loader = data_loading_pipeline.run_pipeline(dataset=dataset)
+        logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\n")
+
+
+        # --- Stage 6: Model Factory (Model Initialization) ---
+        STAGE_NAME = "Stage 06: Model Factory"
+        logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
+        # TODO: implement model factory pipeline
+        model_factory_pipeline = ModelFactoryPipeline(config_manager)
+        model = model_factory_pipeline.run_pipeline(vocab=transformation_output['vocab'])
+        logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\n")
+
+        # --- Stage 7: Callbacks Setup ---
+        STAGE_NAME = "Stage 07: Callbacks Setup"
+        logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
+        # TODO: implement callbacks setup pipeline
+        callbacks_pipeline = CallbacksPipeline(config_manager)
+        callbacks_manager = callbacks_pipeline.run_pipeline()
         logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\n")
 
     except Exception as e:
