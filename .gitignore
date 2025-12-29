@@ -214,7 +214,6 @@ data/
 logs/
 # Models/Checkpoints
 checkpoints/
-models/
 # IDE files
 .vscode/
 .idea/
