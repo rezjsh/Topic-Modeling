@@ -6,3 +6,14 @@ data_transformation:
 
 data_eda:
   top_k_ngrams: 20
+
+data_loading:
+  batch_size: 64
+
+classic_model:
+  n_components: 10
+  max_iter: 100
+
+neural_model:
+  learning_rate: 0.001
+  num_epochs: 50
