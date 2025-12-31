@@ -26,7 +26,7 @@ class ConfigurationManager(metaclass=SingletonMeta):
 
         logger.info(f"DatasetConfig created: {dataset_config}")
         return dataset_config
-    
+
     def get_data_transformation_config(self) -> DataTransformationConfig:
         config = self.config.data_transformation
         params = self.params.data_transformation
@@ -52,7 +52,7 @@ class ConfigurationManager(metaclass=SingletonMeta):
 
         logger.info(f"DataTransformationConfig created: {data_transformation_config}")
         return data_transformation_config
-        
+
     def get_data_eda_config(self) -> DataEDAConfig:
         config = self.config.data_eda
         params = self.params.data_eda
@@ -73,13 +73,13 @@ class ConfigurationManager(metaclass=SingletonMeta):
         logger.info(f"DataEDAConfig created: {data_eda_config}")
         return data_eda_config
 
-    
+
     def get_dataset_config(self) -> DatasetConfig:
         # Currently empty, but can be extended in the future
         dataset_config = DatasetConfig()
         logger.info(f"DatasetConfig created: {dataset_config}")
         return dataset_config
-    
+
 
     def get_data_loading_config(self) -> DataLoadingConfig:
         config = self.config.data_loading
@@ -99,7 +99,7 @@ class ConfigurationManager(metaclass=SingletonMeta):
 
         logger.info(f"DataLoadingConfig created: {data_loading_config}")
         return data_loading_config
-    
+
 
     def get_classic_model_config(self) -> ClassicModelConfig:
         config = self.config.classic_model
@@ -129,7 +129,7 @@ class ConfigurationManager(metaclass=SingletonMeta):
 
         logger.info(f"ProdLDANetworkConfig created: {prod_lda_network_config}")
         return prod_lda_network_config
-    
+
     def get_ntm_network_config(self) -> NTMNetworkConfig:
         config = self.config.ntm_network
         logger.info(f"NTMNetworkConfig loaded: {config}")
@@ -140,7 +140,7 @@ class ConfigurationManager(metaclass=SingletonMeta):
 
         logger.info(f"NTMNetworkConfig created: {ntm_network_config}")
         return ntm_network_config
-    
+
     def get_neural_model_config(self) -> NeuralModelConfig:
         params = self.params.neural_model
         logger.info(f"NeuralModelConfig loaded: params: {params}")
@@ -154,7 +154,7 @@ class ConfigurationManager(metaclass=SingletonMeta):
 
         logger.info(f"NeuralModelConfig created: {neural_model_config}")
         return neural_model_config
-    
+
     def get_embedding_model_config(self) -> EmbeddingModelConfig:
         config = self.config.embedding_model
         logger.info(f"EmbeddingModelConfig loaded: {config}")
@@ -175,7 +175,7 @@ class ConfigurationManager(metaclass=SingletonMeta):
 
     def get_model_factory_config(self) -> TopicModelFactoryConfig:
         config = self.config.model_factory
-        
+
         model_factory_config = TopicModelFactoryConfig(
             classic_model_config=self.get_classic_model_config(),
             neural_model_config=self.get_neural_model_config(),
@@ -186,7 +186,7 @@ class ConfigurationManager(metaclass=SingletonMeta):
         )
         logger.info(f"TopicModelFactoryConfig created: {model_factory_config}")
         return model_factory_config
-    
+
 
     def get_early_stopping_config(self) -> EarlyStoppingCallbackConfig:
         config = self.config.early_stopping
@@ -200,7 +200,7 @@ class ConfigurationManager(metaclass=SingletonMeta):
 
         logger.info(f"EarlyStoppingConfig created: {early_stopping_config}")
         return early_stopping_config
-    
+
 
     def get_model_logger_config(self) -> ModelLoggerConfig:
         config = self.config.model_logger
@@ -209,14 +209,14 @@ class ConfigurationManager(metaclass=SingletonMeta):
         dirs_to_create = [Path(config.log_dir)]
         create_directory(dirs_to_create)
         logger.info(f"Created directories for model logger artifacts: {dirs_to_create}")
-        
+
         model_logger_config = ModelLoggerConfig(
             log_dir=config.log_dir
         )
 
         logger.info(f"ModelLoggerConfig created: {model_logger_config}")
         return model_logger_config
-    
+
 
     def get_model_checkpoint_config(self) -> ModelCheckpointCallbackConfig:
         config = self.config.model_checkpoint
@@ -243,7 +243,7 @@ class ConfigurationManager(metaclass=SingletonMeta):
 
         logger.info(f"CallbacksConfig created: {callbacks_config}")
         return callbacks_config
-    
+
 
     def get_model_trainer_config(self) -> TopicTrainerConfig:
         config = self.config.topic_trainer
@@ -252,7 +252,7 @@ class ConfigurationManager(metaclass=SingletonMeta):
         logger.info(f"TopicTrainerConfig loaded: {config}")
 
         topic_trainer_config = TopicTrainerConfig(
-            root_dir=config.root_dir,
+            root_dir=Path(config.root_dir),
             epochs=params.epochs,
             use_amp=config.use_amp,
 
@@ -260,7 +260,7 @@ class ConfigurationManager(metaclass=SingletonMeta):
 
         logger.info(f"TopicTrainerConfig created: {topic_trainer_config}")
         return topic_trainer_config
-    
+
 
     def get_model_evaluation_config(self) -> ModelEvaluationConfig:
         config = self.config.model_evaluation
