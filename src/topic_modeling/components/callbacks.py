@@ -27,12 +27,3 @@ class CallabcksManager:
         logger.info(f"Total callbacks created: {len(self.callbacks)}")
 
         return self.callbacks
-
-    def on_epoch_end(self, epoch, logs):
-        '''Invoke the on_epoch_end method of all callbacks.'''
-        for cb in self.callbacks:
-            cb.on_epoch_end(epoch, logs)
-
-    def should_stop(self):
-        '''Check if any callback has requested to stop training.'''
-        return any(getattr(cb, 'stop_training', False) for cb in self.callbacks)
