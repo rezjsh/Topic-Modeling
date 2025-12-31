@@ -10,7 +10,7 @@ class ClassicModel:
         self.model_type = model_type.upper()
         self.top_n = top_n
         self.vocab = vocab
-        self.model = self._init_model()
+        self._init_model()
         logger.info(f"Initialized {self.model_type} with {config.n_components} components.")
 
     def _init_model(self):
@@ -26,7 +26,7 @@ class ClassicModel:
                             max_iter=self.config.max_iter,
                             init=self.config.init)
         elif self.model_type == 'LSA':
-            self.model = TruncatedSVD(n_components=self.n_components,
+            self.model = TruncatedSVD(n_components=self.config.n_components,
                                     n_iter=self.config.max_iter,
                                     random_state=self.config.random_state)
         elif self.model_type == 'PLSA':
@@ -37,10 +37,10 @@ class ClassicModel:
                             init='random',
                             solver='mu',
                             random_state=self.config.random_state,
-                            ) 
+                            )
         else:
             raise ValueError(f"Model type {self.model_type} not recognized for ClassicModel.")
-        
+
     def fit(self, bow_matrix: np.ndarray):
         """Fits the model to the bag-of-words matrix."""
 
