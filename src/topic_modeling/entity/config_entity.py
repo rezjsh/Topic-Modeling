@@ -116,3 +116,15 @@ class CallbacksConfig:
     model_logger_callback_config: ModelLoggerConfig
     model_checkpoint_callback_config: ModelCheckpointCallbackConfig
     
+@dataclass(frozen=True)
+class TopicTrainerConfig:
+    epochs: int
+    use_amp: bool
+    root_dir: Path = "artifacts/topic_trainer"
+
+@dataclass(frozen=True)
+class ModelEvaluationConfig:
+    report_csv: Path = "artifacts/model_evaluation/report.csv"
+    top_words_json: Path = "artifacts/model_evaluation/top_words.json"
+    root_dir: Path = "artifacts/model_evaluation"
+    
