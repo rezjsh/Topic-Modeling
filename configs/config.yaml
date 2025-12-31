@@ -42,7 +42,7 @@ classic_model:
 
 prod_lda_network:
   hidden: 256
-  dropout_rate: 0.2
+  dropout: 0.2
 
 ntm_network:
   hidden: 256
@@ -57,7 +57,7 @@ embedding_model:
   speed: "deep-learn" # Options: 'fast-learn', 'learn', 'deep-learn'
   workers: 4
 
-early_stopping_callback:
+early_stopping:
   monitor: "val_loss"
   patience: 5
   mode: "min"
@@ -69,3 +69,12 @@ model_checkpoint:
   save_path: artifacts/checkpoints/best_model.pt
   monitor: "val_loss"
   mode: "min"
+
+topic_trainer:
+  root_dir: artifacts/topic_trainer
+  use_amp: True
+
+model_evaluation:
+  report_csv: artifacts/model_evaluation/benchmark.csv
+  top_words_json: artifacts/model_evaluation/topics.json
+  root_dir: artifacts/model_evaluation
