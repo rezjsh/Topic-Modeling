@@ -2,7 +2,7 @@ from topic_modeling.constants.constants import CONFIG_FILE_PATH, PARAMS_FILE_PAT
 from topic_modeling.core.singleton import SingletonMeta
 from topic_modeling.utils.helpers import create_directory, get_num_workers, read_yaml_file
 from topic_modeling.utils.logging_setup import logger
-from topic_modeling.entity.config_entity import CallbacksConfig, ClassicModelConfig, DataEDAConfig, DataIngestionConfig, DataLoadingConfig, DataTransformationConfig, DatasetConfig, EarlyStoppingCallbackConfig, EmbeddingModelConfig, ModelCheckpointCallbackConfig, ModelLoggerConfig, NTMNetworkConfig, NeuralModelConfig, ProdLDANetworkConfig, TopicModelFactoryConfig
+from topic_modeling.entity.config_entity import CallbacksConfig, ClassicModelConfig, DataEDAConfig, DataIngestionConfig, DataLoadingConfig, DataTransformationConfig, DatasetConfig, EarlyStoppingCallbackConfig, EmbeddingModelConfig, ModelCheckpointCallbackConfig, ModelEvaluationConfig, ModelLoggerConfig, NTMNetworkConfig, NeuralModelConfig, ProdLDANetworkConfig, TopicModelFactoryConfig, TopicTrainerConfig
 from pathlib import Path
 
 class ConfigurationManager(metaclass=SingletonMeta):
@@ -124,7 +124,7 @@ class ConfigurationManager(metaclass=SingletonMeta):
 
         prod_lda_network_config = ProdLDANetworkConfig(
             hidden=config.hidden,
-            dropout_rate=config.dropout_rate
+            dropout=config.dropout
         )
 
         logger.info(f"ProdLDANetworkConfig created: {prod_lda_network_config}")
@@ -142,9 +142,8 @@ class ConfigurationManager(metaclass=SingletonMeta):
         return ntm_network_config
     
     def get_neural_model_config(self) -> NeuralModelConfig:
-        config = self.config.neural_model
         params = self.params.neural_model
-        logger.info(f"NeuralModelConfig loaded: configs: {config} and params: {params}")
+        logger.info(f"NeuralModelConfig loaded: params: {params}")
 
         neural_model_config = NeuralModelConfig(
             prod_lda_network_config=self.get_prod_lda_network_config(),
@@ -167,7 +166,6 @@ class ConfigurationManager(metaclass=SingletonMeta):
             language=config.language,
             n_gram_range=config.n_gram_range,
             low_memory=config.low_memory,
-            nr_topics=config.nr_topics,
             speed=config.speed,
             workers=config.workers
         )
@@ -181,9 +179,10 @@ class ConfigurationManager(metaclass=SingletonMeta):
         model_factory_config = TopicModelFactoryConfig(
             classic_model_config=self.get_classic_model_config(),
             neural_model_config=self.get_neural_model_config(),
-            embeding_model_config=self.get_embedding_model_config(),
+            embedding_model_config=self.get_embedding_model_config(),
             model_name=config.model_name,
-            num_topics=config.num_topics
+            num_topics=config.num_topics,
+            top_n = config.top_n
         )
         logger.info(f"TopicModelFactoryConfig created: {model_factory_config}")
         return model_factory_config
@@ -194,8 +193,9 @@ class ConfigurationManager(metaclass=SingletonMeta):
         logger.info(f"EarlyStoppingConfig loaded: {config}")
 
         early_stopping_config = EarlyStoppingCallbackConfig(
-            min_delta=config.min_delta,
-            patience=config.patience
+            mode=config.mode,
+            patience=config.patience,
+            monitor=config.monitor,
         )
 
         logger.info(f"EarlyStoppingConfig created: {early_stopping_config}")
@@ -234,9 +234,6 @@ class ConfigurationManager(metaclass=SingletonMeta):
         return model_checkpoint_config
 
     def get_callbacks_config(self) -> CallbacksConfig:
-        config = self.config.callbacks
-        logger.info(f"CallbacksConfig loaded: {config}")
-
         callbacks_config = CallbacksConfig(
             early_stopping_callback_config=self.get_early_stopping_config(),
             model_logger_callback_config=self.get_model_logger_config(),
@@ -246,3 +243,37 @@ class ConfigurationManager(metaclass=SingletonMeta):
 
         logger.info(f"CallbacksConfig created: {callbacks_config}")
         return callbacks_config
+    
+
+    def get_model_trainer_config(self) -> TopicTrainerConfig:
+        config = self.config.topic_trainer
+        params = self.params.topic_trainer
+
+        logger.info(f"TopicTrainerConfig loaded: {config}")
+
+        topic_trainer_config = TopicTrainerConfig(
+            root_dir=config.root_dir,
+            epochs=params.epochs,
+            use_amp=config.use_amp,
+
+        )
+
+        logger.info(f"TopicTrainerConfig created: {topic_trainer_config}")
+        return topic_trainer_config
+    
+
+    def get_model_evaluation_config(self) -> ModelEvaluationConfig:
+        config = self.config.model_evaluation
+        logger.info(f"ModelEvaluationConfig loaded: {config}")
+        dirs_to_create = [Path(config.report_csv).parent, Path(config.top_words_json).parent, Path(config.root_dir)]
+        create_directory(dirs_to_create)
+        logger.info(f"Created directories for model evaluation artifacts: {dirs_to_create}")
+
+        model_evaluation_config = ModelEvaluationConfig(
+            report_csv=Path(config.report_csv),
+            top_words_json=Path(config.top_words_json),
+            root_dir=Path(config.root_dir)
+        )
+
+        logger.info(f"ModelEvaluationConfig created: {model_evaluation_config}")
+        return model_evaluation_config
