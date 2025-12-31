@@ -9,5 +9,5 @@ class CallbacksPipeline:
     def run_pipeline(self) -> list:
         """Run the callbacks pipeline to build and return the list of callbacks."""
         callbacks_config = self.config.get_callbacks_config()
-        callbacks_manager = CallabcksManager(config=callbacks_config)
-        return callbacks_manager
+        callbacks = CallabcksManager(config=callbacks_config).build_callbacks()
+        return callbacks
