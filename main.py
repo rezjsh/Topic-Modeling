@@ -7,6 +7,8 @@ from topic_modeling.pipeline.stage_04_dataset import DatasetPipeline
 from topic_modeling.pipeline.stage_05_data_loading import DataLoadingPipeline
 from topic_modeling.pipeline.stage_06_model_factory import ModelFactoryPipeline
 from topic_modeling.pipeline.stage_07_callbacks import CallbacksPipeline
+from topic_modeling.pipeline.stage_08_model_trainer import ModelTrainerPipeline
+from topic_modeling.pipeline.stage_09_model_evaluation import ModelEvaluationPipeline
 from topic_modeling.utils.logging_setup import logger
 
 # Clear CUDA memory (good practice)
@@ -76,9 +78,31 @@ def main():
         logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
         # TODO: implement callbacks setup pipeline
         callbacks_pipeline = CallbacksPipeline(config_manager)
-        callbacks_manager = callbacks_pipeline.run_pipeline()
+        callbacks = callbacks_pipeline.run_pipeline()
         logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\n")
 
+
+        # --- Stage 8: Model Trainer (Training Execution) ---
+        STAGE_NAME = "Stage 08: Model Trainer"
+        logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
+        model_trainer_pipeline = ModelTrainerPipeline(config=config_manager, model=model, callbacks=callbacks)
+        trained_model = model_trainer_pipeline.run_pipeline(
+            transformation_output=transformation_output,
+            train_loader=train_loader,
+            val_loader=val_loader
+        )
+        logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\n")
+
+
+        # --- Stage 9: Model Evaluation ---
+        STAGE_NAME = "Stage 09: Model Evaluation"
+        logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
+        # TODO: implement model evaluation pipeline
+        model_evaluation_pipeline = ModelEvaluationPipeline(config_manager)
+        metrics = model_evaluation_pipeline.run_pipeline(trained_model=trained_model, vocab=transformation_output['vocab'], test_clean_texts=transformation_output['test_clean_text'])
+        logger.info(f"Evaluation Results: {metrics}")
+        logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\n")
+       
     except Exception as e:
         logger.error(f"FATAL ERROR in pipeline execution: {e}")
         raise e
