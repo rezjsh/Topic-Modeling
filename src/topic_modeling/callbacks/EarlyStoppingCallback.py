@@ -3,7 +3,7 @@ from topic_modeling.callbacks import BaseCallback
 from topic_modeling.entity.config_entity import EarlyStoppingCallbackConfig
 from topic_modeling.utils.logging_setup import logger
 
-class EarlyStopping(BaseCallback):
+class EarlyStoppingCallback(BaseCallback):
     def __init__(self, config: EarlyStoppingCallbackConfig):
         self.config = config
         self.best_score = None
