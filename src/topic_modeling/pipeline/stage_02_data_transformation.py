@@ -41,6 +41,9 @@ class DataTransformationPipeline:
         full_df_clean_text = data_transformation.preprocess_corpus(df['text'].tolist())
 
         return {
+            'train_clean_text': train_clean_text,
+            'val_clean_text': val_clean_text,
+            'test_clean_text': test_clean_text,
             'train_bow': train_bow,
             'val_bow': val_bow,
             'test_bow': test_bow,
