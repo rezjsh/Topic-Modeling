@@ -1,4 +1,5 @@
 from typing import List
+import joblib
 import spacy
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
@@ -10,12 +11,7 @@ import re
 class DataTransformation:
     def __init__(self, config: DataTransformationConfig):
         self.config = config
-        try:
-            self.nlp = spacy.load("en_core_web_sm", disable=["parser", "ner", "tok2vec"])
-        except OSError:
-            logger.info("Downloading spaCy model...")
-            spacy.cli.download("en_core_web_sm")
-            self.nlp = spacy.load("en_core_web_sm", disable=["parser", "ner", "tok2vec"])
+        self._init_spacy()
 
         self.vectorizer = CountVectorizer(
             max_features=self.config.max_features,
@@ -27,7 +23,13 @@ class DataTransformation:
 
         self.vocab = None
         self.id2word = None
-
+    def _init_spacy(self):
+            try:
+                self.nlp = spacy.load("en_core_web_sm", disable=["parser", "ner", "tok2vec"])
+            except OSError:
+                logger.info("Downloading spaCy model...")
+                spacy.cli.download("en_core_web_sm")
+                self.nlp = spacy.load("en_core_web_sm", disable=["parser", "ner", "tok2vec"])
 
     def get_vocab(self) -> List[str]:
         """
@@ -36,13 +38,13 @@ class DataTransformation:
         """
         if self.vocab is not None:
             return self.vocab
-        
+
         if self.vectorizer is not None and hasattr(self.vectorizer, 'get_feature_names_out'):
             self.vocab = self.vectorizer.get_feature_names_out().tolist()
             return self.vocab
-        
+
         raise ValueError("Vocabulary not found. Ensure the vectorizer is fitted or vocab is loaded.")
-    
+
     def get_id2word(self) -> dict:
         """Returns the mapping from word index to word."""
         if self.id2word is None:
@@ -56,7 +58,7 @@ class DataTransformation:
             text = re.sub(r'http\S+', '', text)      # URLs
             text = re.sub(r'\s+', ' ', text).strip() # Extra whitespace
             return text
-    
+
     def preprocess_corpus(self, texts: List[str]) -> List[str]:
         """
         Processes a list of documents.
@@ -86,7 +88,7 @@ class DataTransformation:
                 tokens = [token.text for token in doc if not token.is_space]
 
             processed_docs.append(" ".join(tokens))
-        
+
         return processed_docs
 
     def fit(self, train_texts: List[str]):
@@ -95,6 +97,10 @@ class DataTransformation:
         self.vectorizer.fit(train_texts)
         self.vocab = self.vectorizer.get_feature_names_out().tolist()
         self.id2word = {i: word for i, word in enumerate(self.vocab)}
+
+        joblib.dump(self.vectorizer, self.config.vectorizer_path)
+        logger.info(f"✅ Vectorizer saved to: {self.config.vectorizer_path}")
+
         # Save vocabulary and id2word mapping as artifacts
         logger.info("Saving vocabulary and id2word mapping artifacts...")
         np.save(self.config.vocab_path, self.vocab)
@@ -117,4 +123,10 @@ class DataTransformation:
             top_words.append([self.id2word[i] for i in top_indices])
         return top_words
 
-    
+    def load_artifacts(self):
+        """Helper for Inference: Loads the fitted vectorizer and vocab."""
+        logger.info("Loading transformation artifacts for inference...")
+        self.vectorizer = joblib.load(self.config.vectorizer_path)
+        self.vocab = np.load(self.config.vocab_path, allow_pickle=True).tolist()
+        self.id2word = np.load(self.config.id2word_path, allow_pickle=True).item()
+        return self
