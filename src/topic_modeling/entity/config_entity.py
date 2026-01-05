@@ -85,7 +85,7 @@ class EmbeddingModelConfig:
     low_memory: bool
     speed: int
     workers: int
-    
+
 @dataclass(frozen=True)
 class TopicModelFactoryConfig:
     classic_model_config: ClassicModelConfig
@@ -94,7 +94,7 @@ class TopicModelFactoryConfig:
     model_name: str
     num_topics: int
     top_n: int
-    
+
 @dataclass(frozen=True)
 class EarlyStoppingCallbackConfig:
     monitor: str = 'loss'
@@ -103,7 +103,7 @@ class EarlyStoppingCallbackConfig:
 
 @dataclass(frozen=True)
 class ModelLoggerConfig:
-    log_dir: str = "logs"
+    log_dir: Path = "logs"
 
 @dataclass(frozen=True)
 class ModelCheckpointCallbackConfig:
@@ -116,7 +116,7 @@ class CallbacksConfig:
     early_stopping_callback_config: EarlyStoppingCallbackConfig
     model_logger_callback_config: ModelLoggerConfig
     model_checkpoint_callback_config: ModelCheckpointCallbackConfig
-    
+
 @dataclass(frozen=True)
 class TopicTrainerConfig:
     epochs: int
@@ -128,9 +128,8 @@ class ModelEvaluationConfig:
     report_csv: Path = "artifacts/model_evaluation/report.csv"
     top_words_json: Path = "artifacts/model_evaluation/top_words.json"
     root_dir: Path = "artifacts/model_evaluation"
-    
+
 @dataclass(frozen=True)
 class PredictionConfig:
     model_path: Path
     classic_model_path: Path
-    
