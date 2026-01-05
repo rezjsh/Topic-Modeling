@@ -9,6 +9,7 @@ from topic_modeling.pipeline.stage_06_model_factory import ModelFactoryPipeline
 from topic_modeling.pipeline.stage_07_callbacks import CallbacksPipeline
 from topic_modeling.pipeline.stage_08_model_trainer import ModelTrainerPipeline
 from topic_modeling.pipeline.stage_09_model_evaluation import ModelEvaluationPipeline
+from topic_modeling.pipeline.stage_10_inference import InferencePipeline
 from topic_modeling.utils.logging_setup import logger
 
 # Clear CUDA memory (good practice)
@@ -102,7 +103,27 @@ def main():
         metrics = model_evaluation_pipeline.run_pipeline(trained_model=trained_model, vocab=transformation_output['vocab'], test_clean_texts=transformation_output['test_clean_text'])
         logger.info(f"Evaluation Results: {metrics}")
         logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\n")
-       
+
+
+        # --- Stage 10: Model Inference ---
+        STAGE_NAME = "Stage 10: Model Inference"
+        logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
+        # TODO: implement model inference pipeline
+        model_inference_pipeline = InferencePipeline(config_manager)
+        # Unseen User Data
+        unseen_data = [
+            "The latest space mission discovered water on Mars.",
+            "The stock market crashed after the Federal Reserve interest rate hike.",
+            "New research in deep learning suggests transformers are efficient."
+        ]
+        results = model_inference_pipeline.run_pipeline(unseen_data)
+        # Display
+        for i, res in enumerate(results):
+            logger.info(f"\nText: {unseen_data[i][:50]}...")
+            logger.info(f"Detected Topic {res['topic_id']} (Confidence: {res['confidence']:.2%})")
+            logger.info(f"Keywords: {', '.join(res['keywords'])}")
+        logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\n")
+
     except Exception as e:
         logger.error(f"FATAL ERROR in pipeline execution: {e}")
         raise e
