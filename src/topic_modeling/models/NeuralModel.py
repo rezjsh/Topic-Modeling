@@ -11,15 +11,17 @@ from topic_modeling.utils.logging_setup import logger
 from topic_modeling.utils.helpers import get_device
 
 class NeuralModel:
-    def __init__(self, config: NeuralModelConfig, model_type: str, num_topics: int, vocab: int):
+    def __init__(self, config: NeuralModelConfig, model_type: str, num_topics: int, vocab: list, top_n: int):
         self.config = config
         self.model_type = model_type
         self.vocab_size = len(vocab)
         self.num_topics = num_topics
         self.device = get_device()
         self.vocab = vocab
-        self.optimizer = optim.Adam(self.network.parameters(), lr=self.config.learning_rate)
+        self.top_n = top_n # Store top_n
         self._init_model()
+        self.optimizer = optim.Adam(self.network.parameters(), lr=self.config.learning_rate)
+
         logger.info(f"Initialized {self.model_type} Neural Model with {self.num_topics} topics on device {self.device}.")
 
     def _init_model(self):
@@ -57,6 +59,15 @@ class NeuralModel:
         kld = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp(), dim=1).mean()
         logger.debug(f"Reconstruction Loss: {recon_loss.item()}, KL Divergence: {kld.item()}")
         return recon_loss + kld
+
+
+    def predict(self, bow_matrix: np.ndarray) -> np.ndarray:
+        self.network.eval()
+        with torch.no_grad():
+            x = torch.FloatTensor(bow_matrix).to(self.device)
+            _, mu, _ = self.network(x)
+            return torch.softmax(mu, dim=-1).cpu().numpy()
+
 
     def get_topics(self) -> List[List[str]]:
         """Extracts top N words for each topic."""
