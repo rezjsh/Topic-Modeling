@@ -1,7 +1,6 @@
 import os
 import json
 import pandas as pd
-import numpy as np
 from typing import List, Dict
 from gensim.models.coherencemodel import CoherenceModel
 from gensim.corpora import Dictionary
@@ -19,12 +18,14 @@ class ModelEvaluation:
         self.vocab = vocab
         # Coherence requires tokenized words: list of lists of strings
         self.tokenized_corpus = [doc.split() for doc in cleaned_docs]
-        self.dictionary = Dictionary(self.tokenized_corpus)
+        # FIX: Build dictionary from the model's vocabulary (self.vocab), not just test_clean_texts
+        # This ensures all words appearing in `topics` are present in the dictionary.
+        self.dictionary = Dictionary([self.vocab])
 
     def calculate_metrics(self, topics: List[List[str]], model_name: str) -> Dict:
         """Computes Coherence and Diversity for a given set of topics."""
         logger.info(f"Calculating metrics for {model_name}...")
-        
+
         # 1. Coherence (Cv)
         cm = CoherenceModel(
             topics=topics,
@@ -65,5 +66,5 @@ class ModelEvaluation:
 
         with open(self.config.top_words_json, 'w') as f:
             json.dump(topic_data, f, indent=4)
-            
+
         logger.info(f"Evaluation artifacts saved in {self.config.root_dir}")
