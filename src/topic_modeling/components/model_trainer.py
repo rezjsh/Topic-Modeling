@@ -42,7 +42,7 @@ class TopicTrainer:
             if hasattr(cb, 'on_train_begin'): cb.on_train_begin()
 
         start_time = time.time()
-        
+
         # Strategy Dispatch
         if hasattr(self.model, "network"):
             self._run_neural_loop(train_data, val_data, self.config.epochs)
@@ -54,6 +54,8 @@ class TopicTrainer:
 
         for cb in self.callbacks:
             if hasattr(cb, 'on_train_end'): cb.on_train_end()
+
+        return self.model
 
     def _run_classic_fit(self, train_data):
         """Handles Scikit-learn or BERTopic one-shot fitting."""
@@ -88,7 +90,7 @@ class TopicTrainer:
                     stop_training = True
 
             # 5. UI Update
-            display_metrics = {k: f"{v:.4f}" for k, v in epoch_logs.items() 
+            display_metrics = {k: f"{v:.4f}" for k, v in epoch_logs.items()
                               if isinstance(v, (int, float))}
             pbar.set_postfix(display_metrics)
 
@@ -129,7 +131,7 @@ class TopicTrainer:
         return {"val_loss": total_loss / len(loader)}
 
 
-    def save_all_artifacts(self, trained_model, vocab):
+    def save_all_artifacts(self, trained_model, model_name, vocab):
         """
         Saves the model weights, vocabulary, and metadata to the artifacts directory.
         """
@@ -145,7 +147,7 @@ class TopicTrainer:
         else:
             # Classic/Contextual Path (Sklearn/Joblib)
             model_path = model_dir / "model.joblib"
-            joblib.dump(trained_model, model_path)
+            joblib.dump(trained_model.model, model_path) # Save the *internal* sklearn model
             logger.info(f"Classic model binary saved at: {model_path}")
 
         # 2. Save the Vocabulary (Mandatory for Inference)
@@ -156,8 +158,7 @@ class TopicTrainer:
         # 3. Save Training Metadata (for reproducibility)
         meta_path = model_dir / "metadata.json"
         metadata = {
-            "model_name": self.config.model_name,
-            "n_topics": self.config.n_topics,
+            "model_name": model_name,
             "vocab_size": len(vocab)
         }
         with open(meta_path, "w") as f:
