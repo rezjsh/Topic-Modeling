@@ -1,5 +1,5 @@
 data_ingestion:
-  dataset_name: "20newsgroups"
+  dataset_name: "arxiv"
   test_size: 0.15
   val_size: 0.15
   random_state: 42
@@ -13,6 +13,7 @@ data_transformation:
   bow_train_path: artifacts/data_transformation/bow_train.npy
   bow_val_path: artifacts/data_transformation/bow_val.npy
   bow_test_path: artifacts/data_transformation/bow_test.npy
+  vectorizer_path: artifacts/data_transformation/vectorizer.pkl
 
   ngram_range: [1, 2]
   mode: "aggressive" # 'aggressive' or 'contextual'
@@ -78,3 +79,7 @@ model_evaluation:
   report_csv: artifacts/model_evaluation/benchmark.csv
   top_words_json: artifacts/model_evaluation/topics.json
   root_dir: artifacts/model_evaluation
+
+inference:
+  model_path: artifacts/topic_trainer/model.pt # For Neural
+  classic_model_path: artifacts/topic_trainer/model.joblib # For Classic
