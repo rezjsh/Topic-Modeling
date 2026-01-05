@@ -1,8 +1,9 @@
+import torch
 from topic_modeling.constants.constants import CONFIG_FILE_PATH, PARAMS_FILE_PATH
 from topic_modeling.core.singleton import SingletonMeta
 from topic_modeling.utils.helpers import create_directory, get_num_workers, read_yaml_file
 from topic_modeling.utils.logging_setup import logger
-from topic_modeling.entity.config_entity import CallbacksConfig, ClassicModelConfig, DataEDAConfig, DataIngestionConfig, DataLoadingConfig, DataTransformationConfig, DatasetConfig, EarlyStoppingCallbackConfig, EmbeddingModelConfig, ModelCheckpointCallbackConfig, ModelEvaluationConfig, ModelLoggerConfig, NTMNetworkConfig, NeuralModelConfig, ProdLDANetworkConfig, TopicModelFactoryConfig, TopicTrainerConfig
+from topic_modeling.entity.config_entity import CallbacksConfig, ClassicModelConfig, DataEDAConfig, DataIngestionConfig, DataLoadingConfig, DataTransformationConfig, DatasetConfig, EarlyStoppingCallbackConfig, EmbeddingModelConfig, ModelCheckpointCallbackConfig, ModelEvaluationConfig, ModelLoggerConfig, NTMNetworkConfig, NeuralModelConfig, PredictionConfig, ProdLDANetworkConfig, TopicModelFactoryConfig, TopicTrainerConfig
 from pathlib import Path
 
 class ConfigurationManager(metaclass=SingletonMeta):
@@ -42,6 +43,7 @@ class ConfigurationManager(metaclass=SingletonMeta):
             bow_train_path = config.bow_train_path,
             bow_val_path = config.bow_val_path,
             bow_test_path = config.bow_test_path,
+            vectorizer_path = config.vectorizer_path,
             max_features=params.max_features,
             min_df=params.min_df,
             max_df=params.max_df,
@@ -251,6 +253,11 @@ class ConfigurationManager(metaclass=SingletonMeta):
 
         logger.info(f"TopicTrainerConfig loaded: {config}")
 
+        # Create the root directory for the model trainer artifacts
+        dirs_to_create = [Path(config.root_dir)]
+        create_directory(dirs_to_create)
+        logger.info(f"Created directories for model trainer artifacts: {dirs_to_create}")
+
         topic_trainer_config = TopicTrainerConfig(
             root_dir=Path(config.root_dir),
             epochs=params.epochs,
@@ -277,3 +284,16 @@ class ConfigurationManager(metaclass=SingletonMeta):
 
         logger.info(f"ModelEvaluationConfig created: {model_evaluation_config}")
         return model_evaluation_config
+    
+
+
+    def get_prediction_config(self) -> PredictionConfig:
+        config = self.config.inference
+        logger.info(f"PredictionConfig loaded: {config}")
+
+        prediction_config = PredictionConfig(
+            model_path=Path(config.model_path),
+            classic_model_path=Path(config.classic_model_path)
+        )
+        logger.info(f"PredictionConfig created: {prediction_config}")
+        return prediction_config
