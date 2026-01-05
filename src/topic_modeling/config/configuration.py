@@ -166,7 +166,7 @@ class ConfigurationManager(metaclass=SingletonMeta):
             top_n_words=config.top_n_words,
             calculate_probabilities=config.calculate_probabilities,
             language=config.language,
-            n_gram_range=config.n_gram_range,
+            n_gram_range=tuple(config.n_gram_range), # Convert to tuple here
             low_memory=config.low_memory,
             speed=config.speed,
             workers=config.workers
@@ -213,7 +213,7 @@ class ConfigurationManager(metaclass=SingletonMeta):
         logger.info(f"Created directories for model logger artifacts: {dirs_to_create}")
 
         model_logger_config = ModelLoggerConfig(
-            log_dir=config.log_dir
+            log_dir=Path(config.log_dir)
         )
 
         logger.info(f"ModelLoggerConfig created: {model_logger_config}")
@@ -284,7 +284,7 @@ class ConfigurationManager(metaclass=SingletonMeta):
 
         logger.info(f"ModelEvaluationConfig created: {model_evaluation_config}")
         return model_evaluation_config
-    
+
 
 
     def get_prediction_config(self) -> PredictionConfig:
