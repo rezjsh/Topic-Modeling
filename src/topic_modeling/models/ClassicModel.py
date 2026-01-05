@@ -50,6 +50,10 @@ class ClassicModel:
         self.model.fit(bow_matrix)
         logger.info(f"Model fitting completed.")
 
+    def predict(self, bow_matrix: np.ndarray) -> np.ndarray:
+        # Correctly added predict method to fix AttributeError
+        return self.model.transform(bow_matrix)
+
     def get_topics(self) -> List[List[str]]:
         """Extracts top N words for each topic."""
         # Ensure the model has been fitted
