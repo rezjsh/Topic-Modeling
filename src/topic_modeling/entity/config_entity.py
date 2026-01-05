@@ -25,6 +25,7 @@ class DataTransformationConfig:
     bow_test_path: Path = f"{root_dir}/bow_test.npy"
     vocab_path: Path = f"{root_dir}/vocab.npy"
     id2word_path: Path = f"{root_dir}/id2word.npy"
+    vectorizer_path: Path = f"{root_dir}/vectorizer.pkl"
 
 @dataclass(frozen=True)
 class DataEDAConfig:
@@ -127,4 +128,9 @@ class ModelEvaluationConfig:
     report_csv: Path = "artifacts/model_evaluation/report.csv"
     top_words_json: Path = "artifacts/model_evaluation/top_words.json"
     root_dir: Path = "artifacts/model_evaluation"
+    
+@dataclass(frozen=True)
+class PredictionConfig:
+    model_path: Path
+    classic_model_path: Path
     
