@@ -36,5 +36,5 @@ class DatasetPipeline:
             "test": test_ds
         }
         logger.info("TopicModelingDataset instances created for train, val, and test sets.")
-        
+
         return dataset
