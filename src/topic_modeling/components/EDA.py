@@ -97,8 +97,8 @@ class TopicEDA:
     def _plot_label_dist(self, df: pd.DataFrame, label_col: str):
         plt.figure(figsize=(12, 6))
         sns.countplot(
-            y=self.config.label_col, 
-            data=df, 
+            y=self.config.label_col,
+            data=df,
             order=df[self.config.label_col].value_counts().index,
             palette="magma",
             hue=self.config.label_col,
