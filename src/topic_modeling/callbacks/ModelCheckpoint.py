@@ -1,6 +1,6 @@
 from typing import Any, Dict
 import torch
-from topic_modeling.callbacks import BaseCallback
+from topic_modeling.callbacks.BaseCallback import BaseCallback
 from topic_modeling.entity.config_entity import ModelCheckpointCallbackConfig
 from topic_modeling.utils.logging_setup import logger
 
