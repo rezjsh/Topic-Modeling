@@ -1,7 +1,9 @@
 from typing import List
 
 from topic_modeling.entity.config_entity import TopicModelFactoryConfig
-from topic_modeling.models import ClassicModel, EmbeddingModel, NeuralModel
+from topic_modeling.models.ClassicModel import ClassicModel
+from topic_modeling.models.EmbeddingModel import EmbeddingModel
+from topic_modeling.models.NeuralModel import NeuralModel
 from topic_modeling.utils.helpers import get_device
 
 class TopicModelFactory:
