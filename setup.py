@@ -16,10 +16,12 @@ AUTHOR_EMAIL = "your.email@example.com"
 # Core dependencies required for the basic framework to function
 INSTALL_REQUIRES = [
     "torch>=2.0.0",
-    "spacy>=3.5.0",
+    "spacy>=3.7.2",
+    "pydantic>=1.10.13",
     "gensim>=4.3.0",
     "scikit-learn>=1.2.0",
-    "pandas>=1.5.0,<2.0.0", # Essential for pyLDAvis compatibility
+    # "pandas>=1.5.0,<2.0.0", # Essential for pyLDAvis compatibility
+    "pandas>=2.1.1",
     "numpy>=1.23.0",
     "tqdm>=4.65.0",
     "plotly>=5.14.0",
