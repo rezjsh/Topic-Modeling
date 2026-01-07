@@ -2,7 +2,7 @@ import logging
 import os
 import sys
 
-from core.singleton import SingletonMeta
+from topic_modeling.core.singleton import SingletonMeta
 
 class Logger(metaclass=SingletonMeta):
     """
