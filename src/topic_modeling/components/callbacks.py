@@ -1,7 +1,6 @@
-
-
-from topic_modeling.callbacks import EarlyStoppingCallback, ModelLogger
+from topic_modeling.callbacks.EarlyStoppingCallback import EarlyStoppingCallback
 from topic_modeling.callbacks.ModelCheckpoint import ModelCheckpoint
+from topic_modeling.callbacks.ModelLogger import ModelLogger
 from topic_modeling.entity.config_entity import CallbacksConfig
 from topic_modeling.utils.logging_setup import logger
 
