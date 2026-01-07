@@ -1,11 +1,13 @@
 # Core Data Science
 numpy>=1.23.0
-pandas>=1.5.0,<2.0.0
+pandas>=2.1.1
+
 scikit-learn>=1.2.0
 scipy>=1.10.0
 
 # Natural Language Processing
-spacy>=3.5.0
+pydantic>=1.10.13
+spacy>=3.7.2
 gensim>=4.3.0
 nltk>=3.8.0
 
@@ -23,7 +25,7 @@ wordcloud>=1.9.0
 
 # Visualization & UI
 streamlit>=1.22.0
-plotly>=5.14.0
+plotly>=5.15.0
 matplotlib>=3.7.0
 seaborn>=0.12.0
 
@@ -31,3 +33,5 @@ seaborn>=0.12.0
 tqdm>=4.65.0
 ipykernel
 python-dotenv
+
+-e .
