@@ -131,34 +131,39 @@ class TopicTrainer:
         return {"val_loss": total_loss / len(loader)}
 
 
-    def save_all_artifacts(self, trained_model, model_name, vocab):
+    def save_all_artifacts(self, trained_model, model_name, vocab, num_topics):
         """
         Saves the model weights, vocabulary, and metadata to the artifacts directory.
         """
         # Get path from config (defined in config.yaml)
         model_dir = self.config.root_dir
 
+        # Create unique filenames using model_name and num_topics
+        model_filename_prefix = f"{model_name.lower()}_topics_{num_topics}"
+
         # 1. Save the Model Weights/Binary
         if hasattr(trained_model, "network"):
             # Neural Path (PyTorch)
-            model_path = model_dir / "model.pt"
+            model_path = model_dir / f"{model_filename_prefix}.pt"
             torch.save(trained_model.network.state_dict(), model_path)
             logger.info(f"Neural weights saved at: {model_path}")
         else:
             # Classic/Contextual Path (Sklearn/Joblib)
-            model_path = model_dir / "model.joblib"
+            model_path = model_dir / f"{model_filename_prefix}.joblib"
             joblib.dump(trained_model.model, model_path) # Save the *internal* sklearn model
             logger.info(f"Classic model binary saved at: {model_path}")
 
         # 2. Save the Vocabulary (Mandatory for Inference)
-        vocab_path = model_dir / "vocab.npy"
+        # Vocabulary can be shared across models with the same transformation, but for safety, save it per model
+        vocab_path = model_dir / f"{model_filename_prefix}_vocab.npy"
         np.save(vocab_path, vocab)
         logger.info(f"Vocabulary saved at: {vocab_path}")
 
         # 3. Save Training Metadata (for reproducibility)
-        meta_path = model_dir / "metadata.json"
+        meta_path = model_dir / f"{model_filename_prefix}_metadata.json"
         metadata = {
             "model_name": model_name,
+            "num_topics": num_topics,
             "vocab_size": len(vocab)
         }
         with open(meta_path, "w") as f:
