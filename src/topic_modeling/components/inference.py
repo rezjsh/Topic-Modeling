@@ -2,6 +2,8 @@ import torch
 import joblib
 import numpy as np
 from typing import List, Dict, Any, Union
+
+# Modular imports from your project
 from topic_modeling.components.model_factory import TopicModelFactory
 from topic_modeling.utils.helpers import get_device
 from topic_modeling.utils.logging_setup import logger
@@ -39,10 +41,9 @@ class TopicPredictor:
         elif self.factory_config.model_name in ['NTM', 'PRODLDA']:
             wrapper.network.load_state_dict(torch.load(self.config.model_path))
         elif self.factory_config.model_name in ['BERTOPIC', 'TOP2VEC']:
-            from bertopic import BERTopic
-            from top2vec import Top2Vec
-
-            wrapper.model = BERTopic.load(self.config.model_path) if self.factory_config.model_name == 'BERTOPIC' else Top2Vec.load(self.config.model_path)
+            # Embedding models are saved as joblib objects in TopicTrainer.
+            # We load the entire BERTopic/Top2Vec object here.
+            wrapper.model = joblib.load(self.config.classic_model_path)
 
         return wrapper
 
