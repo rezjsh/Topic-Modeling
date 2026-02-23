@@ -52,7 +52,16 @@ class ClassicModel:
 
     def predict(self, bow_matrix: np.ndarray) -> np.ndarray:
         # Correctly added predict method to fix AttributeError
+        # model.transform() returns document-topic distributions:
+        #         | Model | transform() Output Shape | Meaning                                    |
+        # | ----- | ------------------------ | ------------------------------------------ |
+        # | LDA   | (n_docs, n_topics)       | Probability each doc belongs to each topic |
+        # | NMF   | (n_docs, n_topics)       | Weight of each topic in each doc           |
+        # | LSA   | (n_docs, n_components)   | Coordinates in semantic topic space        |
+        # | pLSA  | (n_docs, n_topics)       | Topic weights (NMF-style)                  |
+
         return self.model.transform(bow_matrix)
+
 
     def get_topics(self) -> List[List[str]]:
         """Extracts top N words for each topic."""
