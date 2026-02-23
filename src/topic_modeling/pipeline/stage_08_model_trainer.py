@@ -17,6 +17,7 @@ class ModelTrainerPipeline:
 
         # Normalize model_name to uppercase for consistent comparison
         model_name = model_factory_config.model_name.upper()
+        num_topics = model_factory_config.num_topics
 
         trainer = TopicTrainer(config=trainer_config, model=self.model, callbacks=self.callbacks)
 
@@ -24,17 +25,17 @@ class ModelTrainerPipeline:
         if model_name in ['BERTOPIC', 'TOP2VEC']:
             logger.info("Training text-based model...")
             trained_model = trainer.train(transformation_output['train_clean_text'])
-            trainer.save_all_artifacts(trained_model, model_name, vocab)
+            trainer.save_all_artifacts(trained_model, model_name, vocab, num_topics)
 
         elif model_name in ['NTM', 'PRODLDA']:
             logger.info("Training neural network-based model...")
             trained_model = trainer.train(train_loader, val_loader)
-            trainer.save_all_artifacts(trained_model, model_name, vocab)
+            trainer.save_all_artifacts(trained_model, model_name, vocab, num_topics)
 
         else:
             logger.info("Training classic model...")
             trained_model = trainer.train(transformation_output['train_bow'], transformation_output['val_bow'])
-            trainer.save_all_artifacts(trained_model, model_name, vocab)
+            trainer.save_all_artifacts(trained_model, model_name, vocab, num_topics)
 
         logger.info("Extracting topics from the trained model...")
         topics = trainer.model.get_topics()
