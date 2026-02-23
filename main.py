@@ -94,7 +94,6 @@ def main():
         )
         logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\n")
 
-
         # --- Stage 9: Model Evaluation ---
         STAGE_NAME = "Stage 09: Model Evaluation"
         logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
@@ -108,11 +107,36 @@ def main():
         # --- Stage 10: Model Inference ---
         STAGE_NAME = "Stage 10: Model Inference"
         logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
-        # TODO: implement model inference pipeline
-        model_inference_pipeline = InferencePipeline(config_manager)
+        # Dynamically create prediction config based on the trained model
+        model_factory_config = config_manager.get_model_factory_config()
+        model_name = model_factory_config.model_name.upper()
+        num_topics = model_factory_config.num_topics
+
+        model_filename_prefix = f"{model_name.lower()}_topics_{num_topics}"
+
+        # Determine paths based on model type
+        if model_name in ['NTM', 'PRODLDA']:
+            dynamic_model_path = config_manager.get_model_trainer_config().root_dir / f"{model_filename_prefix}.pt"
+            dynamic_classic_model_path = None # Not used for neural models
+        else:
+            dynamic_model_path = None # Not used for classic/embedding models
+            dynamic_classic_model_path = config_manager.get_model_trainer_config().root_dir / f"{model_filename_prefix}.joblib"
+
+        dynamic_prediction_config = PredictionConfig(
+            model_path=dynamic_model_path,
+            classic_model_path=dynamic_classic_model_path
+        )
+
+        model_inference_pipeline = InferencePipeline(
+            config_manager=config_manager
+        )
+        # Manually set the prediction config for the inference pipeline instance
+        # This is a workaround since InferencePipeline's constructor calls get_prediction_config() directly
+        model_inference_pipeline.pred_config = dynamic_prediction_config
+
         # Unseen User Data
         unseen_data = [
-            "The latest space mission discovered water on Mars.",
+            "Federated learning enables collaborative model training across decentralized devices while preserving privacy, but communication overhead limits scalability. This work introduces FedCompress, a gradient sparsification technique with adaptive quantization that reduces bandwidth by 70% without accuracy loss on CIFAR-10 and GLUE tasks. Real-world deployment on edge devices shows 4x faster convergence compared to FedAvg.",
             "The stock market crashed after the Federal Reserve interest rate hike.",
             "New research in deep learning suggests transformers are efficient."
         ]
