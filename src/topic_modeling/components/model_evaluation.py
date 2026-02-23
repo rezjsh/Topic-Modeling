@@ -1,6 +1,7 @@
 import os
 import json
 import pandas as pd
+import numpy as np
 from typing import List, Dict
 from gensim.models.coherencemodel import CoherenceModel
 from gensim.corpora import Dictionary
